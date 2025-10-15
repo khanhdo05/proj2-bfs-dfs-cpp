@@ -31,18 +31,18 @@ vector<int> DFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
     }
 
     // Reset all vertices 
-    for (auto &v : adjList){
+    for (Vertex &v : adjList){
         v.visited = false;
         v.previous = -1;
     };
 
     // Initialize the stack with the start vertex label.
     stack<int> s;
-    start.visited = true;
+    adjList[start.label].visited = true;
     s.push(start.label);
 
+    // Process the stack until it's empty or we find the exit.
     while(!s.empty()) {
-        
         int curr = s.top();
         s.pop();
 
@@ -59,6 +59,7 @@ vector<int> DFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
         };
     };
 
+    // Initialize path retracing
     vector<int> path;
     int currStep = exit.label;
     
@@ -68,6 +69,7 @@ vector<int> DFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
         currStep = adjList[currStep].previous;
     };
     
+    // Reverse the path to get it from start to exit
     reverse(path.begin(), path.end());
 
     // Return empty if start is not equal to the front of the path
@@ -98,15 +100,15 @@ vector<int> BFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
     }
 
     // Reset all vertices 
-    for (auto &v : adjList){
+    for (Vertex &v : adjList){
         v.visited = false;
         v.previous = -1;
     };
 
     // Initialize the queue with the start vertex label.
     queue<int> q;
+    adjList[start.label].visited = true;
     q.push(start.label);
-    start.visited = true;
 
     // Process the queue until it's empty or we find the exit.
     while (!q.empty()) {
