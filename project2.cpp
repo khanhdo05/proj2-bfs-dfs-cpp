@@ -25,7 +25,51 @@ using namespace std;
  * return an empty vector.
  */
 vector<int> DFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
+    // Reset all vertices 
+    for (Vertex v : adjList){
+        v.visited = false;
+        v.previous = -1;
+    };
+
+    // Initialize the stack with the start vertex label.
+    stack<int> s;
+    start.visited = true;
+    s.push(start.label);
+
+    while(!s.empty()) {
+        
+        int curr = s.top();
+        s.pop();
+
+        if (curr == exit.label){
+            break;
+        };
+
+        for (int neighbor : adjList[curr].neighbors){
+            if (!adjList[neighbor].visited) {
+                adjList[neighbor].visited = true;
+                adjList[neighbor].previous = curr;
+                s.push(neighbor);
+            };
+        };
+    };
+
     vector<int> path;
+    int currStep = exit.label;
+    
+    // Retrace path
+    while (currStep != -1) {
+        path.push_back(currStep);
+        currStep = adjList[currStep].previous;
+    };
+    
+    reverse(path.begin(), path.end());
+
+    // Return empty if start is not equal to the front of the path
+    if (path.front() != start.label) {
+        path.clear();
+    };
+
     return path;
 }
 
@@ -48,18 +92,25 @@ vector<int> BFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
         return {start.label, exit.label};
     }
 
+    // Reset all vertices 
+    for (Vertex v : adjList){
+        v.visited = false;
+        v.previous = -1;
+    };
+
     vector<int> path;
 
-    // Initialize the queue with the start vertex.
-    queue<Vertex> queue;
-    queue.push(start);
+    // Initialize the queue with the start vertex label.
+    queue<int> queue;
+    queue.push(start.label);
     start.visited = true;
-    start.previous = -1;
 
     // Process the queue until it's empty or we find the exit.
     while (!queue.empty()) {
-        Vertex curr = queue.front();
+        int curr_label = queue.front();
         queue.pop();
+
+        Vertex curr = adjList[curr_label];
 
         // Check if we found the exit.
         if (curr == exit) {
@@ -79,7 +130,7 @@ vector<int> BFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
             if (adjList[neighborLabel].visited == false) {
                 adjList[neighborLabel].visited = true;
                 adjList[neighborLabel].previous = curr.label;
-                queue.push(adjList[neighborLabel]);
+                queue.push(neighborLabel);
             };
         };
     };
