@@ -25,8 +25,13 @@ using namespace std;
  * return an empty vector.
  */
 vector<int> DFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
+    // Lazy return when start is exit.
+    if (start == exit) {
+        return {start.label};
+    }
+
     // Reset all vertices 
-    for (Vertex v : adjList){
+    for (auto &v : adjList){
         v.visited = false;
         v.previous = -1;
     };
@@ -89,39 +94,30 @@ vector<int> DFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
 vector<int> BFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
     // Lazy return when start is exit.
     if (start == exit) {
-        return {start.label, exit.label};
+        return {start.label};
     }
 
     // Reset all vertices 
-    for (Vertex v : adjList){
+    for (auto &v : adjList){
         v.visited = false;
         v.previous = -1;
     };
 
-    vector<int> path;
-
     // Initialize the queue with the start vertex label.
-    queue<int> queue;
-    queue.push(start.label);
+    queue<int> q;
+    q.push(start.label);
     start.visited = true;
 
     // Process the queue until it's empty or we find the exit.
-    while (!queue.empty()) {
-        int curr_label = queue.front();
-        queue.pop();
+    while (!q.empty()) {
+        int curr_label = q.front();
+        q.pop();
 
         Vertex curr = adjList[curr_label];
 
         // Check if we found the exit.
         if (curr == exit) {
-            // Backtrack to find the path.
-            while (curr.previous != -1) {
-                path.push_back(curr.label);
-                curr = adjList[curr.previous];
-            }
-            path.push_back(start.label);
-            reverse(path.begin(), path.end());
-            return path;
+            break;
         };
 
         // Explore neighbors.
@@ -130,10 +126,28 @@ vector<int> BFS(vector<Vertex> &adjList, Vertex &start, Vertex &exit) {
             if (adjList[neighborLabel].visited == false) {
                 adjList[neighborLabel].visited = true;
                 adjList[neighborLabel].previous = curr.label;
-                queue.push(neighborLabel);
+                q.push(neighborLabel);
             };
         };
     };
+
+    // Initialize path retracing
+    vector<int> path;
+    int currStep = exit.label;
+
+    // Retrace path
+    while (currStep != -1) {
+        path.push_back(currStep);
+        currStep = adjList[currStep].previous;
+    }
+
+    // Reverse the path to get it from start to exit
+    reverse(path.begin(), path.end());
+
+    // If the path is empty or doesn't start with the start label, return an empty vector.
+    if (path.empty() || path.front() != start.label) {
+        return {};
+    }
 
     return path;
 };
