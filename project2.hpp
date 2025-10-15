@@ -3,9 +3,9 @@
  * project2.hpp
  * Fall 2025
  *
- * Partner 1:
- * Partner 2:
- * Date:
+ * Partner 1: Khanh Do
+ * Partner 2: Mia Hoffmann Kamrat
+ * Date: Oct 15, 2025
  */
 
 #ifndef PROJECT2_HPP_
